@@ -23,12 +23,11 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ], [
-            'email.required' => 'Masukan EMail Onekalbe',
-            'email.email' => 'EMail Tidak Valid',
+            'email.required' => 'Masukan Email Onekalbe',
+            'email.email' => 'Email Tidak Valid',
             'password.required' => 'Masukan Password'
         ]);
 
-        $ip = request()->ip();
         // Membuat array $kredensil langsung
         $kredensil = $request->only('email', 'password');
 
@@ -52,22 +51,19 @@ class AuthController extends Controller
             }
         } else {
             $data = $this->hris($request);
-            $data;
             if (empty($data['accessToken']) || $data['accessToken'] == null) {
-                // Log untuk username tidak ditemukan
                 $logData = [
                     'model' => null,
                     'model_id' => null,
                     'user_id' => null,
-                    'action' => 'Auth',
-                    'location' => $ip,
-                    'reason' => 'Login Gagal: ' . ucwords($request->email),
-                    'how' => 'Login',
-                    'timestamp' => now(),
+                    'userEmail' => $kredensil['email'],
+                    'action' => 'LOGIN',
+                    'description' => 'Salah Username atau Password',
                     'old_data' => null,
                     'new_data' => null,
                 ];
                 (new LogService)->handle($logData);
+                
                 return response()->json([
                     'success' => false,
                     'message' => $data ?? 'Response Not Found',
@@ -77,22 +73,21 @@ class AuthController extends Controller
                 # code...
                 $this->getAccount($data, $request);
 
-
                 if (Auth::attempt($kredensil)) {
                     $user = Auth::user();
+
                     $logData = [
                         'model' => null,
                         'model_id' => null,
-                        'user_id' => null,
+                        'user_id' => $user->id,
+                        'userEmail' => $kredensil['email'],
                         'action' => 'LOGIN',
-                        'location' => $ip,
-                        'reason' => 'Berhasil Login: ' . ucwords($request->email),
-                        'how' => 'Login',
-                        'timestamp' => now(),
+                        'description' => 'Berhasil Login Account',
                         'old_data' => null,
                         'new_data' => null,
                     ];
                     (new LogService)->handle($logData);
+
                     return response()->json([
                         'success' => true,
                         'message' => 'selamat datang',
@@ -102,16 +97,15 @@ class AuthController extends Controller
                     $logData = [
                         'model' => null,
                         'model_id' => null,
-                        'user_id' => null,
-                        'action' => 'Auth',
-                        'location' => $ip,
-                        'reason' => 'Login Gagal: ' . ucwords($request->email),
-                        'how' => 'Login',
-                        'timestamp' => now(),
+                        'user_id' => $user->id,
+                        'userEmail' => $kredensil['email'],
+                        'action' => 'LOGIN',
+                        'description' => 'Salah Username atau Password',
                         'old_data' => null,
                         'new_data' => null,
                     ];
                     (new LogService)->handle($logData);
+
                     return response()->json([
                         'success' => false,
                         'message' => 'Login Gagal Silahkan Ulangi',
@@ -131,6 +125,9 @@ class AuthController extends Controller
             $result = base64_decode($response[1]);
             $response = json_decode($result, true);
             $check = User::where('employeId', $response['NIK'])->first();
+
+            $resultJson = json_encode($response);
+
             if (empty($check)) {
                 # code...
                 User::create([
@@ -139,13 +136,13 @@ class AuthController extends Controller
                     'email' => $request->email,
                     'phone' => $response['EmpHandPhone'] ?? 'NA',
                     'empTypeGroup' => $response['EmpTypeGroup'],
-                    'email_backup' => $request['Email'],
+                    'email_backup' => $response['Email'],
                     'jobLvl' => $response['JobLvlName'],
                     'jobTitle' => $response['JobTtlName'],
                     'groupName' => $response['DivName'],
                     'groupKode' => $response['DivCode'],
                     'password' => Hash::make($request->password),
-                    'result' => $response
+                    'result' => $resultJson
                 ]);
             } else {
                 $check->update([
@@ -154,13 +151,13 @@ class AuthController extends Controller
                     'email' => $request->email,
                     'phone' => $response['EmpHandPhone'] ?? 'NA',
                     'empTypeGroup' => $response['EmpTypeGroup'],
-                    'email_backup' => $request['Email'],
+                    'email_backup' => $response['Email'],
                     'jobLvl' => $response['JobLvlName'],
                     'jobTitle' => $response['JobTtlName'],
                     'groupName' => $response['DivName'],
                     'groupKode' => $response['DivCode'],
                     'password' => Hash::make($request->password),
-                    'result' => $response
+                    'result' => $resultJson
                 ]);
             }
 
@@ -171,7 +168,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'phone' => $response['EmpHandPhone'] ?? 'NA',
                 'empTypeGroup' => $response['EmpTypeGroup'],
-                'email_backup' => $request['Email'],
+                'email_backup' => $response['Email'],
                 'jobLvl' => $response['JobLvlName'],
                 'jobTitle' => $response['JobTtlName'],
                 'groupName' => $response['DivName'],
@@ -240,11 +237,8 @@ class AuthController extends Controller
                 'user_id' => null,
                 'old_data' => $request->all(),
                 'new_data' => null,
-                'action' => 'Logout',
-                'location' => $ip,
-                'reason' => 'User Logging out by System.',
-                'how' => 'Logout',
-                'timestamp' => now(),
+                'action' => 'LogOut',
+                'description' => 'User Logging out by System.',
             ];
         } else {
             // User is authenticated
@@ -254,11 +248,8 @@ class AuthController extends Controller
                 'user_id' => $user->id, // Assuming you want to log the user ID
                 'old_data' => $request->all(),
                 'new_data' => null,
-                'action' => 'Logout',
-                'location' => $ip,
-                'reason' => 'Berhasil Logout ' . $user->email,
-                'how' => 'Logout',
-                'timestamp' => now(),
+                'action' => 'LogOut',
+                'description' => 'Berhasil Logout System',
             ];
         }
 

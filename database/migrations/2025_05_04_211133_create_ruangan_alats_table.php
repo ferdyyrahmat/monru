@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('ruangan_alats', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('keterangan');
+            $table->string('area_name');
+            $table->integer('room_no');
+            $table->string('no_alat')->nullable();
+            $table->string('manual_ems')->nullable();
+            $table->uuid('id_sub_department')->nullable();
+            $table->uuid('id_jenis_ruangan')->nullable();
+            $table->uuid('id_dp')->nullable();
             $table->timestamps();
         });
     }

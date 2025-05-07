@@ -16,10 +16,8 @@ class LogService
             'model_id' => $data['model_id'],
             'user_id' => $data['user_id'], // UUID dari user yang melakukan perubahan
             'action' => $data['action'], // Tipe operasi: created, updated, deleted
-            'location' => $data['location'],
-            'reason' => $data['reason'],
-            'how' => $data['how'],
-            'timestamp' => $data['timestamp'],
+            'userEmail' => $data['userEmail'] ?? '-', //
+            'description' => $data['description'], // Deskripsi perubahan
             'old_data' => $data['old_data'], // Data sebelum perubahan
             'new_data' => $data['new_data'], // Data setelah perubahan
         ]);

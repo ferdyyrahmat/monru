@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('form_pengukurans', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('ruangan/alat');
             $table->float('suhu');
             $table->float('suhu_min');
             $table->float('suhu_max');
             $table->float('rh');
             $table->float('dp');
+            $table->string('alasan')->nullable();
+            $table->uuid('id_ruangan');
+            $table->uuid('id_sub_department');
             $table->uuid('id_pelaksana');
             $table->uuid('id_verifikator')->nullable();
             $table->boolean('is_verified')->default(false);

@@ -10,7 +10,22 @@ use App\Traits\AuditTrailable;
 
 class RuanganAlat extends Model
 {
-    use HasFactory, Notifiable, UUIDAsPrimaryKey, AuditTrailable;
+    use HasFactory, Notifiable, UUIDAsPrimaryKey;
     //
     protected $guarded;
+
+    public function subDepartments()
+    {
+        return $this->belongsTo(SubDepartment::class, 'id_sub_department', 'id');
+    }
+
+    public function jenisRuangan()
+    {
+        return $this->belongsTo(JenisRuangan::class, 'id_jenis_ruangan', 'id');
+    }
+
+    public function jenisDp()
+    {
+        return $this->belongsTo(JenisDp::class, 'id_dp', 'id');
+    }
 }

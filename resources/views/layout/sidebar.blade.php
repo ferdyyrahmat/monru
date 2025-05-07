@@ -15,9 +15,8 @@
         <!--begin::Sidebar toggle-->
 
         <div id="kt_app_sidebar_toggle"
-            class="app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary h-30px w-30px position-absolute top-50 start-100 translate-middle rotate <?php if (Request::segment(4) == 'form_pengukuran') {
-    echo 'active';
-}?>"
+            class="app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary h-30px w-30px position-absolute top-50 start-100 translate-middle rotate 
+            {{-- {{ request()->is('v1/formulir') ? 'active' : '' }} --}}"
             data-kt-toggle="true" data-kt-toggle-state="active" data-kt-toggle-target="body"
             data-kt-toggle-name="app-sidebar-minimize">
             <i class="ki-duotone ki-black-left-line fs-3 rotate-180">
@@ -64,9 +63,10 @@
                         <!--begin:Menu link-->
                         <a class="menu-link {{ request()->is('v1') ? 'active' : '' }}" href="{{ route('v1.dashboard') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                {{-- <i class="ki-outline ki-element-11 fs-2"></i> --}}
+                                <i class="ki-outline ki-home-2 fs-2"></i>
                             </span>
-                            <span class="menu-title">Dashboard</span>
+                            <span class="menu-title fw-semibold">Dashboard</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
@@ -84,11 +84,11 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('v1.dashboard') }}">
+                        <a class="menu-link {{ request()->is('v1/formulir*') ? 'active' : '' }}" href="{{ route('v1.form.index') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                <i class="ki-outline ki-pencil fs-2"></i>
                             </span>
-                            <span class="menu-title">Formulir Pengukuran</span>
+                            <span class="menu-title fw-semibold">Formulir Pengukuran</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
@@ -108,9 +108,9 @@
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('v1.dashboard') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                <i class="ki-outline ki-files-tablet fs-2"></i>
                             </span>
-                            <span class="menu-title">Dashboard Pengukuran</span>
+                            <span class="menu-title fw-semibold">Dashboard Pengukuran</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
@@ -121,9 +121,9 @@
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('v1.dashboard') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                <i class="ki-outline ki-tablet-up fs-2"></i>
                             </span>
-                            <span class="menu-title">Dashboard Outstanding</span>
+                            <span class="menu-title fw-semibold">Dashboard Outstanding</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
@@ -134,9 +134,9 @@
                         <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('v1.dashboard') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                <i class="ki-outline ki-tablet-ok fs-2"></i>
                             </span>
-                            <span class="menu-title">Dashboard Revisi</span>
+                            <span class="menu-title fw-semibold">Dashboard Revisi</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
@@ -146,7 +146,7 @@
                     <div class="menu-item pt-5">
                         <!--begin:Menu content-->
                         <div class="menu-content">
-                            <span class="text-gray-800 fw-bold text-uppercase fs-8">Administrator</span>
+                            <span class="text-gray-800 fw-bold text-uppercase fs-8">Admin Tools</span>
                         </div>
                         <!--end:Menu content-->
                     </div>
@@ -155,11 +155,11 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('v1.dashboard') }}">
+                        <a class="menu-link" href="{{ route('admin.dept.index') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                <i class="ki-outline ki-safe-home fs-2"></i>
                             </span>
-                            <span class="menu-title">Ruangan / Alat</span>
+                            <span class="menu-title fw-semibold">Department</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
@@ -168,16 +168,117 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
+                        <a class="menu-link {{ request()->is('admin/ruangan*') ? 'active' : '' }}" href="{{ route('admin.ruang.index') }}">
+                            <span class="menu-icon">
+                                <i class="ki-outline ki-cube-2 fs-2"></i>
+                            </span>
+                            <span class="menu-title fw-semibold">Ruangan / Alat</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
+                    <!--end:Menu item-->
+                    {{-- Jenis Ruangan --}}
+                    <!--begin:Menu item-->
+                    <div data-kt-menu-trigger="click"
+                        class="menu-item menu-accordion {{ request()->is('admin/jenis/*') || request()->is('admin/syarat*') ? 'here show' : '' }}">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
+                            <span class="menu-icon">
+                                <i class="ki-outline ki-price-tag fs-2"></i>
+                            </span>
+                            <span class="menu-title fw-semibold">Jenis Ruangan & DP</span>
+                            <span class="menu-arrow"></span>
+                        </span>
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link {{ request()->is('admin/jenis/*') ? 'active' : '' }}" href="{{ route('admin.jenis.ruang.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title ">Jenis Ruangan & DP</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link {{ request()->is('admin/syarat*') ? 'active' : '' }}" href="{{ route('admin.syarat.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Syarat Ruangan & DP</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                        </div>
+                        <!--end:Menu sub-->
+                    </div>
+                    <!--end:Menu item-->
+                    {{-- Waktu --}}
+                    <!--begin:Menu item-->
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
                         <a class="menu-link" href="{{ route('v1.dashboard') }}">
                             <span class="menu-icon">
-                                <i class="ki-outline ki-element-11 fs-2"></i>
+                                <i class="ki-outline ki-time fs-2"></i>
                             </span>
-                            <span class="menu-title">Waktu Pengukuran</span>
+                            <span class="menu-title fw-semibold">Waktu Pengukuran</span>
                         </a>
                         <!--end:Menu link-->
                     </div>
                     <!--end:Menu item-->
 
+                    {{-- User Manage --}}
+                    <!--begin:Menu item-->
+                    <div data-kt-menu-trigger="click"
+                        class="menu-item menu-accordion {{ request()->is('admin/users*') ? 'here show' : '' }}">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
+                            <span class="menu-icon">
+                                <i class="ki-outline ki-people fs-2"></i>
+                            </span>
+                            <span class="menu-title fw-semibold">User Manage</span>
+                            <span class="menu-arrow"></span>
+                        </span>
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link {{ request()->is('admin/users/outstanding*') ? 'active' : '' }}"
+                                    href="">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title ">Outstanding Verifikator</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link {{ request()->is('admin/users/revisi*') ? 'active' : '' }}"
+                                    href="">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Revisi Verifikator</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                        </div>
+                        <!--end:Menu sub-->
+                    </div>
+                    <!--end:Menu item-->
                 </div>
                 <!--end::Menu-->
             </div>

@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Permissions extends Model
 {
-    use HasFactory, Notifiable, UUIDAsPrimaryKey, AuditTrailable;
+    use HasFactory, Notifiable, UUIDAsPrimaryKey;
 
 
     protected $guarded;

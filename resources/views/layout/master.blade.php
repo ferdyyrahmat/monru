@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="{{ asset('assets/css/inter_font_api.css') }}" />
     <!--end::Fonts-->
     <!--begin::Vendor Stylesheets(used for this page only)-->
-    <link href="assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/plugins/custom/datatables/datatables.bundle.css')}}" rel="stylesheet" type="text/css" />
+    @yield('head')
     <!--end::Vendor Stylesheets-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
-    <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/plugins/global/plugins.bundle.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
     <script>// Frame-busting to prevent site from being loaded within a frame without permission (click-jacking) if (window.top != window.self) { window.top.location.replace(window.self.location.href); }</script>
@@ -99,19 +99,19 @@
                             data-kt-swapper-parent="{default: '#kt_app_body', lg: '#kt_app_header_wrapper'}">
                             <div class="menu menu-rounded menu-column menu-lg-row my-5 my-lg-0 align-items-stretch fw-semibold px-2 px-lg-0"
                                 id="kt_app_header_menu" data-kt-menu="true">
-                                @php
-$uri = request()->route()->uri();
-$lastSegment = $uri; // Get the last segment of the URI
+                                {{-- @php
+                                    $uri = request()->route()->uri();
+                                    $lastSegment = $uri; // Get the last segment of the URI
 
-// Remove underscores from the last segment
-// $lastSegment = str_replace(['_', '-', 'v1/'], ' ', $lastSegment);
+                                    // Remove underscores from the last segment
+                                    // $lastSegment = str_replace(['_', '-', 'v1/'], ' ', $lastSegment);
 
-$lastSegment = str_replace('/', ' - ', $lastSegment);
+                                    $lastSegment = str_replace('/', ' - ', $lastSegment);
 
-$breadcrumbs = [
-    ['title' => 'Dashboard', 'url' => route('v1.dashboard')],
-    ['title' => ucwords($lastSegment), 'url' => ''], // Use the last segment as the title
-];
+                                    $breadcrumbs = [
+                                        ['title' => 'Dashboard', 'url' => route('v1.dashboard')],
+                                        ['title' => ucwords($lastSegment), 'url' => ''], // Use the last segment as the title
+                                    ];
                                 @endphp
                                 <!--begin:Menu item-->
                                 <div class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
@@ -130,7 +130,7 @@ $breadcrumbs = [
                                         </ol>
                                     </nav>
                                     <!--end:Menu link-->
-                                </div>
+                                </div> --}}
                             </div>
                             <!--end:Menu link-->
                         </div>
@@ -372,7 +372,7 @@ $breadcrumbs = [
                                     <!--begin::Menu separator-->
                                     <div class="separator my-2"></div>
                                     <!--end::Menu separator-->
-                                    <!--begin::Menu item-->
+                                    {{-- <!--begin::Menu item-->
                                     <div class="menu-item px-5">
                                         <button onclick="changePassword()" class="btn menu-link w-100 px-5">
                                             <span class="menu-title position-relative">Change Password
@@ -385,7 +385,7 @@ $breadcrumbs = [
                                             </span>
                                         </button>
                                     </div>
-                                    <!--end::Menu item-->
+                                    <!--end::Menu item--> --}}
                                     <!--begin::Menu item-->
                                     <div class="menu-item px-5">
                                         <a href="{{route('logout')}}" class="menu-link px-5" onclick="showLoading()">Sign Out</a>
@@ -416,82 +416,6 @@ $breadcrumbs = [
             </div>
 
             {{-- <script>
-                function changePassword(){
-                    Swal.fire({
-                        icon: 'question',
-                        title: 'Are You Sure?',
-                        text: 'This action will change your current password.',
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Yes"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: "Set New Password",
-                                input: "text",
-                                inputAttributes: {
-                                    autocapitalize: "off"
-                                },
-                                showCancelButton: true,
-                                confirmButtonText: "Update password",
-                                allowOutsideClick: false,
-                                
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $.ajax({
-                                    type: 'POST',
-                                    url: '{{ url("user/update-password") }}', // Update this route
-                                    data: {
-                                        id: '{{ auth()->user()->id }}',
-                                        new_password: result.value,
-                                        _token: '{{ csrf_token() }}' // Include CSRF token
-                                    },
-                                    cache: false,
-                                    beforeSend: function() {
-                                        Swal.fire({
-                                            title: 'Processing...',
-                                            text: 'Please wait while we process your request.',
-                                            allowOutsideClick: false,
-                                            showConfirmButton: false,
-                                            willOpen: () => {
-                                                Swal.showLoading();
-                                            }
-                                        });
-                                    },
-                                    success: function(response) {
-                                        if (response.success == false) {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Something went wrong!',
-                                                text: response.message + ' ' + response.by
-                                            });
-                                        } else {
-                                            let timerInterval;
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: 'Successful',
-                                                text: response.message + ' ' + response.by,
-                                                allowOutsideClick: false,
-                                                showConfirmButton: false,
-                                                timer: 2000,
-                                                timerProgressBar: true,
-                                                willOpen: () => {
-                                                    Swal.showLoading();
-                                                },
-                                                willClose: () => {
-                                                    clearInterval(timerInterval);
-                                                }
-                                            });
-                                        }
-                                    },
-                                });
-                                }
-                            });
-                        }
-                    });
-                }
-
                 function clearNotif() 
                 {
                     $.ajax({
@@ -587,6 +511,8 @@ $breadcrumbs = [
                 <!--end:::Main-->
             </div>
             <!--end::Wrapper-->
+
+            @yield('modal')
         </div>
         <!--end::Page-->
     </div>
@@ -644,7 +570,7 @@ $idleMinutes = 59; // Default to 60 minutes if not set
         document.addEventListener('touchstart', resetIdleTime);
     </script>
 
-    <script>
+    {{-- <script>
         // Function to check orientation and update display
         function checkOrientation() {
             if (window.innerHeight > window.innerWidth) {
@@ -669,10 +595,10 @@ $idleMinutes = 59; // Default to 60 minutes if not set
         window.addEventListener("resize", function() {
             checkOrientation();
         });
-    </script>
+    </script> --}}
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
-    <script src="/assets/plugins/global/plugins.bundle.js"></script>
-    <script src="/assets/js/scripts.bundle.js"></script>
+    <script src="{{asset('/assets/plugins/global/plugins.bundle.js')}}"></script>
+    <script src="{{asset('/assets/js/scripts.bundle.js')}}"></script>
     {{-- <script src="{{ asset('assets/js/check.js') }}"></script> --}}
     @include('layout.alert')
     <!--end::Global Javascript Bundle-->
@@ -803,6 +729,7 @@ $idleMinutes = 59; // Default to 60 minutes if not set
             });
         });
     </script>
+
     @yield('scripts')
     <!--end::Javascript-->
 </body>

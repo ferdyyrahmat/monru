@@ -101,7 +101,7 @@ style="background-image: url('/assets/img/bglineB.svg'); background-repeat: repe
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     <script src="/assets/plugins/global/plugins.bundle.js"></script>
     <script src="/assets/js/scripts.bundle.js"></script>
-    <script src="{{ asset('assets/js/check.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/check.js') }}"></script> --}}
     <!--end::Global Javascript Bundle-->
     @include('layout.alert')
     <script>

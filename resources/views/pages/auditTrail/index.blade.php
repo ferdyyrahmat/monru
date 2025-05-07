@@ -89,120 +89,29 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <table id="table_audit" class="table align-middle table-row-dashed fs-6 gy-5" style="width:100%">
+                                        <table id="table_audit" class="table table-bordered align-middle table-row-dashed fs-6 gy-5" style="width:100%">
                                             <thead>
                                                 <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                                                    <th>No</th>
-                                                    <th>Log Date</th>
+                                                    <th>#</th>
+                                                    <th>Perusahaan</th>
                                                     <th>User</th>
-                                                    {{-- <th>Line</th> --}}
                                                     <th>Action</th>
                                                     <th>Description</th>
-                                                    <th>IP Address</th>
-                                                    <th></th>
+                                                    <th>Waktu</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php $no = 1; ?>
-                                                @foreach ($dataAudit as $data)
-                                                    <tr>
-                                                        <td>{{ $no++ }}</td>
-                                                        <td>
-                                                            <div class="d-flex flex-start">
-                                                                <span class="text-gray-800">{{ $data->created_at->format('d M Y H:i:s') }}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="text-gray-800">{{ ucwords(optional($data->users)->nama) }}</div>
-                                                        </td>
-                                                        {{-- <td>
-                                                            <div class="text-gray-800">{{ ucwords(optional(optional($data->users)->lines)->nama_line) }}</div>
-                                                        </td> --}}
-                                                        <td>
-                                                            <div class="text -gray-800">{{ strtoupper($data->action) }}</div>
-                                                        </td>
-                                                        <td >
-                                                            <div class="d-flex flex-start">
-                                                                <span class="text-gray-800">
-                                                                    {{ strtoupper($data->reason) . ' ' . strtoupper(str_replace('App\Models\\', '', $data->model)) }}
-                                                                </span>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="text -gray-800">{{ $data->location }}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="text-gray-800">
-                                                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalChanges{{ $data->id }}">
-                                                                    <i class="fas fa-info-circle me-2"></i> Detail
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-
-                                                    <!-- Modal for detailed changes -->
-                                                    <div class="modal fade" id="modalChanges{{ $data->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $data->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-xl">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="modalLabel{{ $data->id }}">Detail Changes for {{ $data->action }}</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="mb-3">
-                                                                        <p><strong>Event:</strong> {{ ucwords($data->action) }}</p>
-                                                                        <p><strong>Date:</strong> {{ $data->created_at->format('d M Y H:i') }}</p>
-                                                                        <p><strong>User:</strong> {{ ucwords(optional($data->users)->nama) }}</p>
-                                                                        <p><strong>Line:</strong> {{ ucwords(optional(optional($data->users)->lines)->nama_line) }}</p>
-                                                                        <p><strong>IP Address:</strong> {{ $data->location }}</p>
-                                                                    </div>
-
-                                                                    <div class="mb-3">
-                                                                        <p>
-                                                                            <strong>Status:</strong>
-                                                                            @if(isset($allChanges[$data->id]['is_draft']['new']) && $allChanges[$data->id]['is_draft']['new'] == '1')
-                                                                                <span class="badge bg-light-warning">Draft</span>
-                                                                            @elseif(isset($allChanges[$data->id]['is_waiting']['new']) && $allChanges[$data->id]['is_waiting']['new'] == '1')
-                                                                                <span class="badge bg-warning">Sending Approval / Waiting</span>
-                                                                            @elseif(isset($allChanges[$data->id]['is_revisi']['new']) && $allChanges[$data->id]['is_revisi']['new'] == '1')
-                                                                                <span class="badge bg-info">Update Status To "Revisi"</span>
-                                                                            @elseif(isset($allChanges[$data->id]['is_approved']['new']) && $allChanges[$data->id]['is_approved']['new'] == '1')
-                                                                                <span class="badge bg-success">Data is Approved</span>
-                                                                            @elseif(isset($allChanges[$data->id]['is_rejected']['new']) && $allChanges[$data->id]['is_rejected']['new'] == '1')
-                                                                                <span class="badge bg-danger">Data is Rejected</span>
-                                                                            @elseif (isset($allChanges[$data->id]['is_delete_punch']['new']) && $allChanges[$data->id]['is_delete_punch']['new'] == '1')
-                                                                                <span class="badge bg-danger">Data is Deleted</span>
-                                                                            @else
-                                                                                <span class="badge bg-secondary">No status available</span>
-                                                                            @endif
-                                                                        </p>
-                                                                    </div>
-
-                                                                    <div>
-                                                                        <p><strong>Changes:</strong></p>
-                                                                        <ul class="list-group">
-                                                                            @if(isset($allChanges[$data->id]))
-                                                                                @foreach($allChanges[$data->id] as $key => $change)
-                                                                                <li class="list-group-item">
-                                                                                    <strong>{{ ucwords($key) }}:</strong> 
-                                                                                    <span class="text-danger">Old: {{ $change['old'] ?? 'N/A' }}</span>, 
-                                                                                    <span class="text-success">New: {{ $change['new'] ?? 'N/A' }}</span>
-                                                                                </li>
-                                                                                @endforeach
-                                                                            @else
-                                                                                <li class="list-group-item">No changes recorded.</li>
-                                                                            @endif
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
                                             </tbody>
+                                            <tfoot>
+                                                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                                    <th>#</th>
+                                                    <th>Perusahaan</th>
+                                                    <th>User</th>
+                                                    <th>Action</th>
+                                                    <th>Description</th>
+                                                    <th>Waktu</th>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -236,11 +145,37 @@
     <script src="/assets/js/scripts.bundle.js"></script>
     <script src="{{asset("/assets/plugins/custom/datatables/datatables.bundle.js")}}"></script>
     <script>
+        const auditUrl = "{{ route('audit') }}";
+
         $(document).ready(function() {
             $('.page-loading').fadeIn();
             setTimeout(function() {
                 $('.page-loading').fadeOut();
             }, 1000); // Adjust the timeout duration as needed
+
+            $("#table_audit").DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: auditUrl,
+                },
+                columns: [
+                    { data: 0, orderable: true },
+                    { data: "compName" },
+                    { data: "user" },
+                    { data: "action" },
+                    { data: "description" },
+                    { data: "created_at" },
+                ],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1; // Calculate the row index
+                        },
+                    },
+                ],
+            });
         });
 
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -251,31 +186,31 @@
             // Redirect to the dashboard route
             window.location.href = route;
         }
-        $('#table_audit').DataTable({
-                layout: {
-                    topEnd: {
-                        search: {
-                            placeholder: 'Type anything here'
-                        }
-                    },
-                    bottomEnd: {
-                        paging: {
-                            type: 'simple'
-                        },
-                    },
-                },
-                initComplete: function () {
-                    var btns = $('.dt-button');
-                    btns.removeClass('dt-button');
-                    btns.removeClass('dt-button');
-                },
-                responsive: true,
-                lengthMenu: [
-                    [25, 50, 100],
-                    [25, 50, 100]
-                ],
-                keys: true,
-            });
+        // $('#table_audit').DataTable({
+        //     layout: {
+        //         topEnd: {
+        //             search: {
+        //                 placeholder: 'Type anything here'
+        //             }
+        //         },
+        //         bottomEnd: {
+        //             paging: {
+        //                 type: 'simple'
+        //             },
+        //         },
+        //     },
+        //     initComplete: function () {
+        //         var btns = $('.dt-button');
+        //         btns.removeClass('dt-button');
+        //         btns.removeClass('dt-button');
+        //     },
+        //     responsive: true,
+        //     lengthMenu: [
+        //         [25, 50, 100],
+        //         [25, 50, 100]
+        //     ],
+        //     keys: true,
+        // });
     </script>
 </body>
 </html>
