@@ -10,7 +10,9 @@ use App\Models\User;
 use App\Services\LogService;
 use Auth;
 use DB;
+use Hash;
 use Illuminate\Http\Request;
+use Log;
 use Validator;
 
 class FormulirController extends Controller
