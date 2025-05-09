@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('waktu_pemeriksaans', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->integer('shift');
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->timestamps();
         });
     }

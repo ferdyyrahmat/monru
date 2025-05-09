@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
+use App\Models\FormOutstanding;
 use App\Models\FormPengukuran;
+use App\Models\FormRevisi;
 use App\Models\RuanganAlat;
 use App\Models\SubDepartment;
 use App\Models\User;
+use App\Models\WaktuPemeriksaan;
 use App\Services\LogService;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Hash;
 use Illuminate\Http\Request;
@@ -19,21 +23,21 @@ class FormulirController extends Controller
 {
     public function index(Request $request)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
             $id_dept = $request->id_dept;
             $ruangan = RuanganAlat::query()
-                                    ->where('id_sub_department', $id_dept)
-                                    ->get();
-
+                ->where('id_sub_department', $id_dept)
+                ->get();
             return response()->json([
                 'success' => true,
-                'ruangan' =>$ruangan 
+                'ruangan' => $ruangan
             ]);
         }
 
         $dept = SubDepartment::with('departments')->get();
-        
+
         return view('pages.formulir.index', compact('dept'));
+
     }
 
     public function create()
@@ -43,7 +47,25 @@ class FormulirController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the incoming request data
+        $jenis = $request->jenisMonitoring;
+
+        // Periksa Outstanding
+        $currentTime = now();
+        $waktuPeriksa = WaktuPemeriksaan::where('start_time', '<=', $currentTime)
+            ->where('end_time', '>=', $currentTime)
+            ->first();
+        $is_outstanding = false;
+        $is_verified = true;
+        if (is_null($waktuPeriksa)) {
+            $waktuPeriksa = WaktuPemeriksaan::where('end_time', '<', $currentTime)
+                ->orderBy('end_time', 'desc')
+                ->first();
+            $is_outstanding = true;
+            $is_verified = false;
+        }
+        //
+
+
         $request->validate([
             'id_sub_department' => 'required|exists:sub_departments,id',
             'id_ruangan' => 'required|exists:ruangan_alats,id', // Adjust according to your database structure
@@ -57,19 +79,48 @@ class FormulirController extends Controller
             'alasan' => 'nullable|string', // Only required if jenisMonitoring is 'edit'
         ]);
 
-        // Create a new form entry
-        $form = new FormPengukuran();
-        $form->id_sub_department = $request->id_sub_department;
-        $form->id_ruangan = $request->id_ruangan; // Adjust according to your database structure
-        $form->suhu = $request->suhu;
-        $form->suhu_min = $request->suhu_min;
-        $form->suhu_max = $request->suhu_max;
-        $form->rh = $request->rh;
-        $form->dp = $request->dp;
-        $form->id_pelaksana = $request->id_pelaksana;
-        $form->id_verifikator = $request->id_verifikator; // This can be null if not verified yet
-        $form->alasan = $request->alasan; // Only filled if jenisMonitoring is 'edit'
-        $form->save();
+        $data = [
+            'id_sub_department' => $request->id_sub_department,
+            'id_ruangan' => $request->id_ruangan,
+            'suhu' => $request->suhu,
+            'suhu_min' => $request->suhu_min,
+            'suhu_max' => $request->suhu_max,
+            'rh' => $request->rh,
+            'dp' => $request->dp,
+            'alasan' => $request->alasan,
+            'shift_pemeriksaan' => $waktuPeriksa->id,
+            'tgl_pemeriksaan' => Carbon::now()->format('j'),
+            'bulan_pemeriksaan' => Carbon::now()->format('n'),
+            'tahun_pemeriksaan' => Carbon::now()->format('Y'),
+            'jam_pemeriksaan' => now(),
+            'id_pelaksana' => $request->id_pelaksana,
+            'id_verifikator' => $request->id_verifikator, 
+            'is_verified' => $is_verified,
+            'is_outstanding' => $is_outstanding
+        ];
+        
+
+        if ($jenis === 'new') {
+            FormPengukuran::create($data);
+        }elseif($jenis === 'edit'){
+            $cekData = FormPengukuran::query()
+            ->where('shift_pemeriksaan', $waktuPeriksa->id)
+            ->where('tgl_pemeriksaan', Carbon::now()->format('j'))
+            ->where('bulan_pemeriksaan', Carbon::now()->format('n'))
+            ->where('tahun_pemeriksaan', Carbon::now()->format('y'))
+            ->where('id_ruangan', $request->id_ruangan)
+            ->exists();
+            if($cekData){
+                FormRevisi::create($data);
+            }else{
+                FormPengukuran::create($data);
+            }
+        }
+
+        if ($is_outstanding === true) {
+            FormOutstanding::create($data);
+        }
+
 
         // Return a response
         return response()->json([

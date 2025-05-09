@@ -106,7 +106,7 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('v1.dashboard') }}">
+                        <a class="menu-link {{ request()->is('v1/monitoring/pengukuran*') ? 'active' : '' }}" href="{{ route('v1.monitoring.pengukuran.index') }}">
                             <span class="menu-icon">
                                 <i class="ki-outline ki-files-tablet fs-2"></i>
                             </span>
@@ -151,11 +151,11 @@
                         <!--end:Menu content-->
                     </div>
                     <!--end:Menu item-->
-                    {{-- Ruangan --}}
+                    {{-- Department --}}
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('admin.dept.index') }}">
+                        <a class="menu-link {{ request()->is('admin/department*') ? 'active' : '' }}" href="{{ route('admin.dept.index') }}">
                             <span class="menu-icon">
                                 <i class="ki-outline ki-safe-home fs-2"></i>
                             </span>
@@ -224,7 +224,7 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('v1.dashboard') }}">
+                        <a class="menu-link {{ request()->is('admin/waktu*') ? 'active' : '' }}" href="{{ route('admin.waktu.index') }}">
                             <span class="menu-icon">
                                 <i class="ki-outline ki-time fs-2"></i>
                             </span>

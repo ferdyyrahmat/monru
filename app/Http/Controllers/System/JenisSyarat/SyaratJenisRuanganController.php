@@ -65,6 +65,38 @@ class SyaratJenisRuanganController extends Controller
         return view('pages.admin.jenisSyarat.syarat.ruangan.edit', compact('syarat'));
     }
 
+    public function update(Request $request, $id)
+    {
+        if (!$id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'ID is required.'
+            ]);
+        }
+        $data = request()->validate([
+            'name' => 'required|string|max:255',
+            'syarat_suhu' => 'required|string|max:255',
+            'batas_bawah_suhu_alert' => 'nullable|numeric',
+            'batas_bawah_suhu_action' => 'nullable|numeric',
+            'batas_atas_suhu_alert' => 'nullable|numeric',
+            'batas_atas_suhu_action' => 'nullable|numeric',
+            'syarat_rh' => 'required|string|max:255',
+            'batas_bawah_rh_alert' => 'nullable|numeric',
+            'batas_bawah_rh_action' => 'nullable|numeric',
+            'batas_atas_rh_alert' => 'nullable|numeric',
+            'batas_atas_rh_action' => 'nullable|numeric',
+        ]);
+
+        $SyaratJenisRuangan = SyaratJenisRuangan::findOrFail($id);
+        $SyaratJenisRuangan->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Syarat Jenis Ruangan updated successfully.',
+            'redirect' => route('admin.syarat.index')
+        ]);
+    }
+
     public function destroy(Request $request)
     {
         $id = $request->input('id');

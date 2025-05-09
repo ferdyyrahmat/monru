@@ -19,6 +19,11 @@ return new class extends Migration
             $table->float('rh');
             $table->float('dp');
             $table->string('alasan')->nullable();
+            $table->uuid('shift_pemeriksaan');
+            $table->integer('tgl_pemeriksaan');
+            $table->integer('bulan_pemeriksaan');
+            $table->integer('tahun_pemeriksaan');
+            $table->time('jam_pemeriksaan');
             $table->uuid('id_ruangan');
             $table->uuid('id_sub_department');
             $table->uuid('id_pelaksana');

@@ -10,7 +10,7 @@ use App\Traits\AuditTrailable;
 
 class WaktuPemeriksaan extends Model
 {
-    use HasFactory, Notifiable, UUIDAsPrimaryKey, AuditTrailable;
+    use HasFactory, Notifiable, UUIDAsPrimaryKey;
     //
     protected $guarded;
 }

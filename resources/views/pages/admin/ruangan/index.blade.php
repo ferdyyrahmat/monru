@@ -48,7 +48,7 @@
         <div id="kt_app_content_container" class="app-container container-fluid d-flex flex-column flex-column-fluid">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">asd</div>
+                    <div class="card-title"></div>
                     <div class="card-toolbar">
                         <a href="{{ route('admin.ruang.create') }}">
                             <button class="btn btn-primary">

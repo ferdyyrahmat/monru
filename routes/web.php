@@ -11,6 +11,7 @@ use App\Http\Controllers\System\JenisSyarat\JenisRuanganController;
 use App\Http\Controllers\System\JenisSyarat\SyaratController;
 use App\Http\Controllers\System\JenisSyarat\SyaratJenisDpController;
 use App\Http\Controllers\System\JenisSyarat\SyaratJenisRuanganController;
+use App\Http\Controllers\System\Monitoring\DashboardPemeriksaanController;
 use App\Http\Controllers\System\Ruangan\RuanganController;
 use App\Http\Controllers\System\User\UserOutstandingController;
 use App\Http\Controllers\System\User\UserRevisiController;
@@ -36,7 +37,8 @@ Route::prefix('v1')->name('v1.')->middleware(['auth'])->group(function () {
 
     Route::prefix('monitoring')->name('monitoring.')->group(function () {
         Route::prefix('pengukuran')->name('pengukuran.')->group(function () {
-            Route::get('', [FormulirController::class, 'index'])->name('index');
+            Route::get('', [DashboardPemeriksaanController::class, 'index'])->name('index');
+            Route::get('show/{id}', [DashboardPemeriksaanController::class, 'show'])->name('show');
         });
     });
     
@@ -116,6 +118,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     //waktu
     Route::prefix('waktu')->name('waktu.')->group(function () {
         Route::get('', [WaktuPengukuranController::class, 'index'])->name('index');
+        Route::post('store', [WaktuPengukuranController::class, 'store'])->name('store');
+        Route::post('edit', [WaktuPengukuranController::class, 'edit'])->name('edit');
+        Route::post('update', [WaktuPengukuranController::class, 'update'])->name('update');
+        Route::post('destroy', [WaktuPengukuranController::class, 'destroy'])->name('destroy');
     });
 
     //user
