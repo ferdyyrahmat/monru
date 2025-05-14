@@ -21,10 +21,10 @@ class AuditController extends Controller
                     return Carbon::parse($row->created_at)->translatedFormat('l, d M Y H:i');
                 })
                 ->editColumn('action', function ($row) {
-                    return strtoupper($row->action) ?? '-';
+                    return ucwords($row->action) ?? '-';
                 })
                 ->editColumn('description', function ($row) {
-                    return strtoupper($row->description) ?? '-';
+                    return ucwords($row->description) ?? '-';
                 })
                 ->addColumn('user', function ($row) {
                     $email = optional($row->users)->email;

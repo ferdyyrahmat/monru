@@ -30,6 +30,8 @@ return new class extends Migration
             $table->uuid('id_verifikator')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_outstanding')->default(false);
+            // $table->boolean('is_approved')->default(false);
+            // $table->boolean('is_rejected')->default(false);
             $table->enum('status', ['need_review', 'rejected', 'accepted'])->default('need_review');
             $table->timestamps();
         });

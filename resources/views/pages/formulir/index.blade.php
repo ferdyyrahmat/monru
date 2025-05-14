@@ -356,7 +356,7 @@
                                                 <div class="card shadow-sm border-info m-1" id="verifikator_frame">
                                                     <div class="card-body">
                                                         <div class="card-content">
-                                                            <div class="row row-cols-1 row-cols-md-2">
+                                                            <div class="row">
                                                                 <div class="col">
                                                                     <label class="d-flex align-items-center fs-6 fw-semibold mb-2" for="department">
                                                                         <span class="text-gray-800">Verifikator: </span>
@@ -366,8 +366,8 @@
                                                                         <h4 class="text-gray-500">belum di verifikasi</h4>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col">
-                                                                    <button type="button" class="btn btn-info w-100" id="btnVerifikasi" data-bs-toggle="modal" data-bs-target="#modal_verifikasi" >Verifikasi</button>
+                                                                <div class="col" id="btnVerifikasi">
+                                                                    <button type="button" class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#modal_verifikasi" >Verifikasi</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -437,45 +437,47 @@
                 <!--end::Modal header-->
                 <!--begin::Modal body-->
                 <div class="modal-body px-5">
-                    <!--begin::Scroll-->
-                    <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="modal_verifikasi_scroll"
-                        data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto"
-                        data-kt-scroll-dependencies="#modal_verifikasi_header"
-                        data-kt-scroll-wrappers="#modal_verifikasi_scroll" data-kt-scroll-offset="300px">
-                        <div class="row">
-                            <!--begin::Input group-->
-                            <div class="col">
-                                <!--begin::Label-->
-                                <label class="required fw-semibold fs-6 mb-2">Email Verifikator</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                <input type="text" name="email_verifikator" id="email_verifikator" class="form-control mb-3 mb-lg-0"
-                                    placeholder="Email OneKalbe" />
-                            <!--begin::Input group-->
-                            <div class="col my-2">
-                                <!--begin::Label-->
-                                <label class="required fw-semibold fs-6 mb-2">password</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                <input type="password" name="password_verifikator" id="password_verifikator" class="form-control mb-3 mb-lg-0"
-                                    placeholder="password" />
-                                <!--end::Input-->
+                    <form>
+                        <!--begin::Scroll-->
+                        <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="modal_verifikasi_scroll"
+                            data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto"
+                            data-kt-scroll-dependencies="#modal_verifikasi_header"
+                            data-kt-scroll-wrappers="#modal_verifikasi_scroll" data-kt-scroll-offset="300px">
+                            <div class="row">
+                                <!--begin::Input group-->
+                                <div class="col">
+                                    <!--begin::Label-->
+                                    <label class="required fw-semibold fs-6 mb-2">Email Verifikator</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="email_verifikator" id="email_verifikator" class="form-control mb-3 mb-lg-0"
+                                        placeholder="Email OneKalbe" />
+                                <!--begin::Input group-->
+                                <div class="col my-2">
+                                    <!--begin::Label-->
+                                    <label class="required fw-semibold fs-6 mb-2">password</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="password" name="password_verifikator" id="password_verifikator" class="form-control mb-3 mb-lg-0"
+                                        placeholder="password" autocomplete/>
+                                    <!--end::Input-->
+                                </div>
+                                <!--end::Input group-->
                             </div>
-                            <!--end::Input group-->
+                            <!--begin::Actions-->
+                            <div class="text-center pt-10">
+                                <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Discard</button>
+                                <button type="button" class="btn btn-primary" onclick="checkUser()">
+                                    <span class="indicator-label">Verifikasi</span>
+                                    <span class="indicator-progress">Please wait...
+                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                    </span>
+                                </button>
+                            </div>
+                            <!--end::Actions-->
                         </div>
-                        <!--begin::Actions-->
-                        <div class="text-center pt-10">
-                            <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Discard</button>
-                            <button class="btn btn-primary" onclick="checkUser()">
-                                <span class="indicator-label">Verifikasi</span>
-                                <span class="indicator-progress">Please wait...
-                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                </span>
-                            </button>
-                        </div>
-                        <!--end::Actions-->
-                    </div>
-                    <!--end::Scroll-->
+                        <!--end::Scroll-->
+                    </form>
                 </div>
                 <!--end::Modal body-->
             </div>
@@ -642,15 +644,23 @@
                     $('.page-loading').fadeIn();
                 },
                 success: function (response) {
-                    $('#verifikator').html('<h4>'+ response.verifikator +'</h4>');
-                    $('#id_verifikator').val(response.id);
-                    $('#verifikator_frame').removeClass('border-info').addClass('border-success');
-                    $('#btnVerifikasi').hide();
-                    $('#email_verifikator').val('');
-                    $('#password_verifikator').val('');
-                    $('#modal_verifikasi').modal('hide');
-                    $('.page-loading').fadeOut();
-
+                    if (response.success == false) {
+                        $('.page-loading').fadeOut();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.message,
+                        });
+                    }else {
+                        $('#verifikator').html('<h4>' + response.verifikator + '</h4>');
+                        $('#id_verifikator').val(response.id);
+                        $('#verifikator_frame').removeClass('border-info').addClass('border-success');
+                        $('#btnVerifikasi').remove();
+                        $('#email_verifikator').val('');
+                        $('#password_verifikator').val('');
+                        $('#modal_verifikasi').modal('hide');
+                        $('.page-loading').fadeOut();
+                    }
                 },
                 error: function (error) {
                     console.error("Error fetching data", error);
@@ -660,7 +670,6 @@
     </script>
     <script>
         $('.jenisMonitoring').on('change', function () {
-            console.log(this.value);
             if (this.value == 'edit') {
                 $('#alasanPerbaikan').html(`<div class="col"><div class= "d-flex flex-column" ><label class="d-flex align-items-center fs-5 fw-semibold mb-2" for="alasan"><span class="required text-gray-700">Alasan Perbaikan</span></label><textarea class="form-control" name="alasan" id="alasan" required></textarea></div ></div > `)
             }else{

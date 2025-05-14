@@ -24,9 +24,10 @@ class DashboardPemeriksaanController extends Controller
                 ->where('id_ruangan', $request->ruang)
                 ->where('bulan_pemeriksaan', $request->f_month)
                 ->where('tahun_pemeriksaan', $request->f_year)
+                ->latest()
                 ->get();
 
-            $ruang = RuanganAlat::with('jenisRuangan')->with('jenisDp')->first();
+            $ruang = RuanganAlat::with('jenisRuangan')->with('jenisDp')->where('id', $request->ruang)->first();
 
             return response()->json([
                 'view' => view('pages.monitoring.dashboard-pemeriksaan.partial.list', compact('dataMonitoring'))->render(),
@@ -37,8 +38,8 @@ class DashboardPemeriksaanController extends Controller
 
         $dataMonitoring = FormPengukuran::query()
             ->where('id_sub_department', $id)
-            ->orderBy('created_at', 'desc')
-            ->first();
+            ->latest()
+            ->get();
 
         $ruangan = RuanganAlat::query()
                 ->where('id_sub_department', $id)

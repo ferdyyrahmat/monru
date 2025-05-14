@@ -13,4 +13,23 @@ class FormRevisi extends Model
     use HasFactory, Notifiable, UUIDAsPrimaryKey;
     //
     protected $guarded;
+
+    public function pelaksana()
+    {
+        return $this->belongsTo(User::class, 'id_pelaksana', 'id');
+    }
+    public function verifikator()
+    {
+        return $this->belongsTo(User::class, 'id_verifikator', 'id');
+    }
+
+    public function ruangan()
+    {
+        return $this->belongsTo(RuanganAlat::class, 'id_ruangan', 'id');
+    }
+    public function waktu()
+    {
+        return $this->belongsTo(WaktuPemeriksaan::class, 'shift_pemeriksaan', 'id');
+    }
+
 }

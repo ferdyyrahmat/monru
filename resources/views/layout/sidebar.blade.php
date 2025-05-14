@@ -119,7 +119,7 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('v1.dashboard') }}">
+                        <a class="menu-link {{ request()->is('v1/monitoring/outstanding*') ? 'active' : '' }}" href="{{ route('v1.monitoring.outstanding.index') }}">
                             <span class="menu-icon">
                                 <i class="ki-outline ki-tablet-up fs-2"></i>
                             </span>
@@ -132,7 +132,7 @@
                     <!--begin:Menu item-->
                     <div class="menu-item">
                         <!--begin:Menu link-->
-                        <a class="menu-link" href="{{ route('v1.dashboard') }}">
+                        <a class="menu-link {{ request()->is('v1/monitoring/revisi*') ? 'active' : '' }}" href="{{ route('v1.monitoring.revisi.index') }}">
                             <span class="menu-icon">
                                 <i class="ki-outline ki-tablet-ok fs-2"></i>
                             </span>

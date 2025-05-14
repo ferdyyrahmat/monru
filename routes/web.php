@@ -11,7 +11,9 @@ use App\Http\Controllers\System\JenisSyarat\JenisRuanganController;
 use App\Http\Controllers\System\JenisSyarat\SyaratController;
 use App\Http\Controllers\System\JenisSyarat\SyaratJenisDpController;
 use App\Http\Controllers\System\JenisSyarat\SyaratJenisRuanganController;
+use App\Http\Controllers\System\Monitoring\DashboardOutstandingController;
 use App\Http\Controllers\System\Monitoring\DashboardPemeriksaanController;
+use App\Http\Controllers\System\Monitoring\DashboardRevisiController;
 use App\Http\Controllers\System\Ruangan\RuanganController;
 use App\Http\Controllers\System\User\UserOutstandingController;
 use App\Http\Controllers\System\User\UserRevisiController;
@@ -39,6 +41,20 @@ Route::prefix('v1')->name('v1.')->middleware(['auth'])->group(function () {
         Route::prefix('pengukuran')->name('pengukuran.')->group(function () {
             Route::get('', [DashboardPemeriksaanController::class, 'index'])->name('index');
             Route::get('show/{id}', [DashboardPemeriksaanController::class, 'show'])->name('show');
+        });
+        Route::prefix('outstanding')->name('outstanding.')->group(function () {
+            Route::get('', [DashboardOutstandingController::class, 'index'])->name('index');
+            Route::get('dt', [DashboardOutstandingController::class, 'getTableData'])->name('getTableData');
+            Route::get('show/{id}', [DashboardOutstandingController::class, 'show'])->name('show');
+            Route::post('approved', [DashboardOutstandingController::class, 'approved'])->name('approved');
+            Route::post('rejected', [DashboardOutstandingController::class, 'rejected'])->name('rejected');
+        });
+        Route::prefix('revisi')->name('revisi.')->group(function () {
+            Route::get('', [DashboardRevisiController::class, 'index'])->name('index');
+            Route::get('dt', [DashboardRevisiController::class, 'getTableData'])->name('getTableData');
+            Route::get('show/{id}', [DashboardRevisiController::class, 'show'])->name('show');
+            Route::post('approved', [DashboardRevisiController::class, 'approved'])->name('approved');
+            Route::post('rejected', [DashboardRevisiController::class, 'rejected'])->name('rejected');
         });
     });
     

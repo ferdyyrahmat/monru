@@ -59,7 +59,7 @@
                                         <div class="col">
                                             <div class="row row-cols-2 row-cols-md-3">
                                                 @php
-    $no = 1;
+$no = 1;
                                                 @endphp
                                                 @foreach ($department as $item)
                                                     <div class="col">
@@ -95,10 +95,15 @@
 @section('scripts')
     <script>
         function showData() {
-            var id = $('input[name="department"]:checked').val(); // This gets the selected department ID
-            const URL = "{{ route('v1.monitoring.pengukuran.show', ':id') }}"; // Construct the URL with the ID
-            
-            window.location.href = URL.replace(':id', id);
-        }
+                var id = $('input[name="department"]:checked').val(); // This gets the selected department ID
+
+                // Check if no department is selected
+                if (!id) {
+                    alert('Please select a department before proceeding.');
+                    return; // Exit the function if no department is selected
+                }
+                const URL = "{{ route('v1.monitoring.pengukuran.show', ':id') }}"; // Construct the URL with the ID
+                window.location.href = URL.replace(':id', id);
+            }
     </script>
 @endsection

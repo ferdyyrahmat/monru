@@ -101,19 +101,44 @@ class FormulirController extends Controller
         
 
         if ($jenis === 'new') {
-            FormPengukuran::create($data);
+            $form = FormPengukuran::create($data);
+
+            $logData = [
+                'model' => FormPengukuran::class,
+                'model_id' => $form->id,
+                'user_id' => auth()->user()->id,
+                'userEmail' => auth()->user()->email,
+                'action' => 'create',
+                'description' => 'Berhasil Membuat Formulir Data Baru',
+                'new_data' => $form->getAttributes(),
+                'old_data' => null,
+            ];
+            (new LogService)->handle($logData);
+
         }elseif($jenis === 'edit'){
             $cekData = FormPengukuran::query()
             ->where('shift_pemeriksaan', $waktuPeriksa->id)
-            ->where('tgl_pemeriksaan', Carbon::now()->format('j'))
-            ->where('bulan_pemeriksaan', Carbon::now()->format('n'))
-            ->where('tahun_pemeriksaan', Carbon::now()->format('y'))
+            ->where('tgl_pemeriksaan', (int) Carbon::now()->format('j'))
+            ->where('bulan_pemeriksaan', (int) Carbon::now()->format('n'))
+            ->where('tahun_pemeriksaan', (int) Carbon::now()->format('Y'))
             ->where('id_ruangan', $request->id_ruangan)
             ->exists();
             if($cekData){
                 FormRevisi::create($data);
             }else{
-                FormPengukuran::create($data);
+                $form = FormPengukuran::create($data);
+
+                $logData = [
+                    'model' => FormPengukuran::class,
+                    'model_id' => $form->id,
+                    'user_id' => auth()->user()->id,
+                    'userEmail' => auth()->user()->email,
+                    'action' => 'create',
+                    'description' => 'Berhasil Membuat Formulir Perbaikan Data',
+                    'new_data' => $form->getAttributes(),
+                    'old_data' => null,
+                ];
+                (new LogService)->handle($logData);
             }
         }
 
@@ -153,8 +178,9 @@ class FormulirController extends Controller
         $user = User::where('email', $request->email)->first();
         if (!empty($user) && $user->jobLvl == 'Administrator') {
             # code...
-            if (Auth::attempt($kredensil)) {
-                $user = Auth::user();
+            $password = $user->password;
+            if (password_verify($kredensil['password'],$password)) {
+                // $user = Auth::user();
                 $logData = [
                     'model' => null,
                     'model_id' => null,
@@ -199,45 +225,27 @@ class FormulirController extends Controller
             } else {
                 # code...
                 $this->getAccount($data, $request);
+                $user = User::query()
+                    ->where('email', $kredensil['email'])
+                    ->first();
 
-                if (Auth::attempt($kredensil)) {
-                    $user = Auth::user();
+                $logData = [
+                    'model' => null,
+                    'model_id' => null,
+                    'user_id' => $user->id,
+                    'userEmail' => $kredensil['email'],
+                    'action' => 'VERIFY',
+                    'description' => 'Berhasil Verifikasi Data Monitoring',
+                    'old_data' => null,
+                    'new_data' => null,
+                ];
+                (new LogService)->handle($logData);
 
-                    $logData = [
-                        'model' => null,
-                        'model_id' => null,
-                        'user_id' => $user->id,
-                        'userEmail' => $kredensil['email'],
-                        'action' => 'VERIFY',
-                        'description' => 'Berhasil Verifikasi Data Monitoring',
-                        'old_data' => null,
-                        'new_data' => null,
-                    ];
-                    (new LogService)->handle($logData);
-
-                    return response()->json([
-                        'success' => true,
-                        'id' => $user->id,
-                        'verifikator' => $kredensil['email']
-                    ]);
-                } else {
-                    $logData = [
-                        'model' => null,
-                        'model_id' => null,
-                        'user_id' => $user->id,
-                        'userEmail' => $kredensil['email'],
-                        'action' => 'VERIFIY',
-                        'description' => 'Gagal Memverifikasi Data Monitoring',
-                        'old_data' => null,
-                        'new_data' => null,
-                    ];
-                    (new LogService)->handle($logData);
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Verifikasi Gagal Silahkan Ulangi'
-                    ]);
-                }
+                return response()->json([
+                    'success' => true,
+                    'id' => $user->id,
+                    'verifikator' => $kredensil['email']
+                ]);
             }
         }
     }

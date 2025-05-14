@@ -116,7 +116,7 @@ class AuthController extends Controller
         }
     }
 
-    private function getAccount($data, $request)
+    public function getAccount($data, $request)
     {
         try {
             DB::beginTransaction();
@@ -182,7 +182,7 @@ class AuthController extends Controller
         }
     }
 
-    private function hris($request)
+    public function hris($request)
     {
         $credentials = [
             'username' => $request->email,
